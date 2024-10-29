@@ -1,15 +1,16 @@
 import SwiftUI
 
-/// View for creating a new plant reminder.
-struct NewReminder: View {
+/// View for editing a plant reminder.
+struct EditReminder: View {
     @Environment(\.dismiss) var dismiss  // Environment variable to dismiss the view
     @ObservedObject var plantViewModel: PlantViewModel  // Observed object for managing plant data
-    @State var plantName: String = ""  // State variable for the plant name
-    @State var room: String = "Bedroom"  // State variable for the room selection
-    @State var light: String = "Full sun"  // State variable for light requirement
-    @State var wateringDays: String = "Every day"  // State variable for watering days
-    @State var waterAmount: String = "20-50 ml"  // State variable for water amount
-    var plant: Plant  // The plant object for which the reminder is being set
+    @State private var plantName: String = ""  // State variable for the plant name
+    @State private var room: String = "Bedroom"  // State variable for the room selection
+    @State private var light: String = "Full sun"  // State variable for light requirement
+    @State private var wateringDays: String = "Every day"  // State variable for watering days
+    @State private var waterAmount: String = "20-50 ml"  // State variable for water amount
+    @State var isChecked = false  // State variable for the checked status
+    var plant: Plant  // The plant object being edited
 
     var body: some View {
         NavigationView {
@@ -18,14 +19,14 @@ struct NewReminder: View {
                 Section {
                     HStack {
                         Text("Plant Name")  // Label for the plant name
-                        TextField("Plant Name", text: $plantViewModel.plantName)  // Text field for entering the plant name
+                        TextField("Plant Name", text: $plantName)  // Text field for entering the plant name
                     }
                 }
                 // Section for room and light selection
                 Section {
                     HStack {
                         Image(systemName: "location")  // Icon for room selection
-                        Picker("Room", selection: $plantViewModel.locationOptions) {
+                        Picker("Room", selection: $room) {
                             ForEach(plantViewModel.locationOptions1, id: \.self) { option in
                                 Text(option)  // Options for room selection
                                     .tag(option)  // Tagging the option for identification
@@ -34,7 +35,7 @@ struct NewReminder: View {
                     }
                     HStack {
                         Image(systemName: "sun.min")  // Icon for light selection
-                        Picker("Light", selection: $plantViewModel.lightOptions) {
+                        Picker("Light", selection: $light) {
                             ForEach(plantViewModel.lightOptions2, id: \.self) { option in
                                 Text(option)  // Options for light requirement selection
                                     .tag(option)  // Tagging the option for identification
@@ -46,29 +47,36 @@ struct NewReminder: View {
                 Section {
                     HStack {
                         Image(systemName: "drop")  // Icon for watering days selection
-                        Picker("Watering Days", selection: $plantViewModel.waterOptions) {
+                        Picker("Watering Days", selection: $wateringDays) {
                             ForEach(plantViewModel.waterOptions3, id: \.self) { option in
                                 Text(option)  // Options for watering days selection
-                                    .tag(option)  // Tagging the option for identification
                             }
                         }
                     }
                     HStack {
                         Image(systemName: "drop")  // Icon for water amount selection
-                        Picker("Water", selection: $plantViewModel.wateringDays) {
+                        Picker("Water", selection: $waterAmount) {
                             ForEach(plantViewModel.wateringDays4, id: \.self) { option in
                                 Text(option)  // Options for water amount selection
-                                    .tag(option)  // Tagging the option for identification
                             }
                         }
                     }
+                }
+                // Button to delete the reminder
+                Button(action: {
+                    // plantViewModel.removePlant(plant)  // Uncomment to enable deletion
+                    dismiss()  // Dismiss the view
+                }) {
+                    Text("Delete Reminder")  // Button label
+                        .foregroundColor(.red)  // Text color for the delete button
+                        .frame(maxWidth: .infinity, alignment: .center)  // Button styling
                 }
             }
             .navigationBarTitle("Set Reminder", displayMode: .inline)  // Navigation title
             .navigationBarItems(leading: Button("Cancel") {
                 dismiss()  // Dismiss the view on cancel
             }.foregroundColor(Color.gren), trailing: Button("Save") {
-                plantViewModel.savePlant()  // Save the new plant reminder
+                plantViewModel.savePlant()  // Save the updated plant details
                 dismiss()  // Dismiss the view
             }.foregroundColor(Color.gren))
         }
@@ -83,10 +91,10 @@ struct NewReminder: View {
     }
 }
 
-/// Preview provider for the NewReminder view.
-struct NewReminder_Previews: PreviewProvider {
+/// Preview provider for the EditReminder view.
+struct EditReminder_Previews: PreviewProvider {
     static var previews: some View {
-        NewReminder(
+        EditReminder(
             plantViewModel: PlantViewModel(),  // Sample PlantViewModel for preview
             plant: Plant(name: "", room: "", light: "", water: "", waterDays: "", isChecked: false)  // Sample plant for preview
         )
