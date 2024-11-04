@@ -21,3 +21,6 @@ When all reminders are completed, a full-screen 'Well Done' page provides positi
 ### Tools :
 - SwiftUI
 - Swift langauge 
+
+### Contact information:
+Sufanaaljawi@gmail.com
